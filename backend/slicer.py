@@ -33,6 +33,10 @@ def slice_for(
     caller_depth: int = 1,
 ) -> SliceResult:
     """Compute minimal slice for a target symbol."""
+    if callee_depth is not None and callee_depth < 0:
+        raise ValueError("callee_depth must be non-negative or None")
+    if caller_depth < 0:
+        raise ValueError("caller_depth must be non-negative")
     if target_id not in graph.symbols:
         raise KeyError(f"unknown symbol: {target_id!r}")
 
