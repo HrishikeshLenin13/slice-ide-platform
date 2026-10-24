@@ -1,6 +1,6 @@
 """Core slicing logic: compute minimal context for a target symbol."""
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import List, Dict, Set, Optional
 
 from .parser import Symbol
@@ -19,6 +19,10 @@ class SliceResult:
     sound: bool
     unsound_reasons: Dict[str, List[str]] = field(default_factory=dict)
     unresolved: Dict[str, List[str]] = field(default_factory=dict)
+
+    def to_dict(self) -> dict:
+        """Return a detached, JSON-serializable report for IDE clients."""
+        return asdict(self)
 
     def symbols_in_order(self) -> List[str]:
         """Get included symbols in order."""
