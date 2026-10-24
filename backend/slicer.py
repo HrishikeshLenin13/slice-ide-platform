@@ -26,7 +26,7 @@ class SliceResult:
 
     def symbols_in_order(self) -> List[str]:
         """Get included symbols in order."""
-        return self.included
+        return list(self.included)
 
 
 def slice_for(
