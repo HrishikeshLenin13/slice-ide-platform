@@ -20,3 +20,6 @@ class ApiExtensions(unittest.TestCase):
 
     def test_multiline_caller_signatures_remain_complete(self):
         text=slicer.render_slice(self.graph,self.result);self.assertIn('argument: int,',text);self.assertNotIn('return target()',text);self.assertIn('caller body omitted',text)
+
+    def test_source_units_preserve_emission_order_and_detach_metadata(self):
+        units=slicer.source_units(self.graph,self.result);self.assertEqual([u['id'] for u in units],self.result.included);units[0]['source']='changed';self.assertNotEqual(self.graph.symbols[self.result.target].source,'changed')

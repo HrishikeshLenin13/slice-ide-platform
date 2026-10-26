@@ -183,3 +183,9 @@ def render_slice(graph: RepoGraph, result: SliceResult, *, caller_signature_only
                 src = header + "\n    ...  # (caller body omitted; only the call site matters here)"
             parts.append(f"\n# [{tag}] {sym.id}\n{src}")
     return "\n".join(parts)
+
+def source_units(graph: RepoGraph, result: SliceResult) -> list[dict]:
+    """Full-source units for IDE clients; caller bodies are intentionally retained."""
+    return [{"id":sid,"kind":graph.symbols[sid].kind,"file_path":graph.symbols[sid].file_path,
+             "lineno":graph.symbols[sid].lineno,"source":graph.symbols[sid].source,
+             "target":sid==result.target} for sid in result.included]
