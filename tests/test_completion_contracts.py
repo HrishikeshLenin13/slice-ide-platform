@@ -54,3 +54,7 @@ class CompletionContracts(unittest.TestCase):
     def test_012_reject_empty_ids_in_callers(self):
         data=self.result.to_dict();data['callers']=['']
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
+
+    def test_013_reject_nonlist_type_refs(self):
+        data=self.result.to_dict();data['type_refs']='bad'
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
