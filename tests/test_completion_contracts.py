@@ -18,3 +18,7 @@ class CompletionContracts(unittest.TestCase):
 
     def test_003_serialized_reports_are_json_compatible(self):
         data=self.result.to_dict();self.assertEqual(json.loads(json.dumps(data)),data)
+
+    def test_004_reject_nonlist_included(self):
+        data=self.result.to_dict();data['included']='bad'
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
