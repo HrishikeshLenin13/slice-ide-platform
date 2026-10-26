@@ -34,3 +34,7 @@ class CompletionContracts(unittest.TestCase):
     def test_007_reject_nonlist_callees(self):
         data=self.result.to_dict();data['callees']='bad'
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
+
+    def test_008_reject_duplicate_callees(self):
+        data=self.result.to_dict();data['callees']=['demo.target','demo.target']
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
