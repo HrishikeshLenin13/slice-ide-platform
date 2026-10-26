@@ -86,3 +86,7 @@ class CompletionContracts(unittest.TestCase):
     def test_020_reject_omitted_members_in_callers(self):
         data=self.result.to_dict();data['callers']=['missing']
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
+
+    def test_021_reject_omitted_members_in_type_refs(self):
+        data=self.result.to_dict();data['type_refs']=['missing']
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
