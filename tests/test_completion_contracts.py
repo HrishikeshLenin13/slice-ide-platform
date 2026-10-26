@@ -70,3 +70,7 @@ class CompletionContracts(unittest.TestCase):
     def test_016_reject_nonlist_global_refs(self):
         data=self.result.to_dict();data['global_refs']='bad'
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
+
+    def test_017_reject_duplicate_global_refs(self):
+        data=self.result.to_dict();data['global_refs']=['demo.target','demo.target']
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
