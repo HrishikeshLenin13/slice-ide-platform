@@ -145,3 +145,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_039_batch_slicing_rejects_missing_targets(self):
         with self.assertRaises(KeyError):slicer.slice_many(self.graph,['demo.target','missing'])
+
+    def test_040_batch_render_matches_individual_context(self):
+        r=slicer.render_many(self.graph,['demo.target']);self.assertEqual(r['demo.target'],slicer.render_slice(self.graph,self.result))
