@@ -40,3 +40,7 @@ Run from the repository root:
 python3 -m unittest discover -s tests -v
 ```
 
+
+## Strong report contracts and IDE integration
+
+Single and batch depths must be actual nonnegative integers (not booleans or floats). Imported reports reject empty/duplicate IDs and role lists that reference omitted members. `symbol_roles` and source-unit `roles` expose detached ordered labels. `render_many` validates the entire target list before returning deterministic rendered contexts; it reuses one graph and deduplicates targets in request order.

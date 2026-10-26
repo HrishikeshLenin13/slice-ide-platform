@@ -213,3 +213,9 @@ def slice_many(graph: RepoGraph, targets, *, callee_depth=None, caller_depth=1) 
     for sid in ids:
         if sid not in graph.symbols: raise KeyError(f"unknown symbol: {sid!r}")
     return {sid:slice_for(graph,sid,callee_depth=callee_depth,caller_depth=caller_depth) for sid in ids}
+
+
+def render_many(graph: RepoGraph, targets, *, callee_depth=None, caller_depth=1) -> dict[str, str]:
+    """Validate the entire target batch before rendering any source contexts."""
+    results = slice_many(graph, targets, callee_depth=callee_depth, caller_depth=caller_depth)
+    return {target:render_slice(graph, result) for target,result in results.items()}

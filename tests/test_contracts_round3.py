@@ -25,3 +25,8 @@ class ContractsRound3(unittest.TestCase):
         units=slicer.source_units(self.graph,self.result);self.assertIn('roles',units[0]);units[0]['roles'].clear()
         self.assertEqual(slicer.symbol_roles(self.result,'demo.target'),['target'])
         with self.assertRaises(KeyError):slicer.symbol_roles(self.result,'missing')
+    def test_batch_render_matches_individual_context_and_validates_all_targets(self):
+        texts=slicer.render_many(self.graph,['demo.target','demo.caller','demo.target'])
+        self.assertEqual(list(texts),['demo.target','demo.caller'])
+        self.assertEqual(texts['demo.target'],slicer.render_slice(self.graph,self.result))
+        with self.assertRaises(KeyError):slicer.render_many(self.graph,['demo.target','missing'])
