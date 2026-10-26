@@ -154,3 +154,7 @@ class CompletionContracts(unittest.TestCase):
 
     def test_042_caller_text_omits_body_but_keeps_signature(self):
         text=slicer.render_slice(self.graph,self.result);self.assertIn('def caller',text);self.assertIn('caller body omitted',text)
+
+    def test_043_depth_validation_rejects_booleans_and_floats(self):
+        for value in [True,1.5,'1',-1]:
+            with self.assertRaises(ValueError):slicer.slice_for(self.graph,'demo.target',caller_depth=value)
