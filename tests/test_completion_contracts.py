@@ -124,3 +124,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_032_target_role_is_exposed_to_ide_clients(self):
         self.assertIn('target',slicer.symbol_roles(self.result,'demo.target'))
+
+    def test_033_unknown_role_queries_fail_instead_of_guessing(self):
+        with self.assertRaises(KeyError):slicer.symbol_roles(self.result,'missing')
