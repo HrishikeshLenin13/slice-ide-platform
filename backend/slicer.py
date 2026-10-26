@@ -171,7 +171,15 @@ def render_slice(graph: RepoGraph, result: SliceResult, *, caller_signature_only
                 and sym.id != result.target
                 and sym.kind in ("function", "method")
             ):
-                first_line = src.splitlines()[0] if src else ""
-                src = first_line + "\n    ...  # (caller body omitted; only the call site matters here)"
+                try:
+                    node=ast.parse(textwrap.dedent(src)).body[0]
+                    first=node.body[0]
+                    lines=src.splitlines()
+                    if first.lineno == node.lineno:
+                        header="\n".join(lines[:first.lineno-1]+[lines[first.lineno-1].encode("utf-8")[:first.col_offset].decode("utf-8").rstrip()])
+                    else: header="\n".join(lines[:first.lineno-1])
+                except (SyntaxError,IndexError,AttributeError):
+                    header=src.splitlines()[0] if src else ""
+                src = header + "\n    ...  # (caller body omitted; only the call site matters here)"
             parts.append(f"\n# [{tag}] {sym.id}\n{src}")
     return "\n".join(parts)

@@ -17,3 +17,6 @@ class ApiExtensions(unittest.TestCase):
 
     def test_summary_counts_members_without_exposing_lists(self):
         data=self.result.summary();self.assertEqual(data['target'],'demo.target');self.assertEqual(data['callers'],1);self.assertIsInstance(data['included'],int)
+
+    def test_multiline_caller_signatures_remain_complete(self):
+        text=slicer.render_slice(self.graph,self.result);self.assertIn('argument: int,',text);self.assertNotIn('return target()',text);self.assertIn('caller body omitted',text)
