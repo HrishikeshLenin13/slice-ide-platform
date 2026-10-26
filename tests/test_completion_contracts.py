@@ -139,3 +139,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_037_zero_caller_depth_omits_reverse_dependencies(self):
         r=slicer.slice_for(self.graph,'demo.target',caller_depth=0);self.assertEqual(r.callers,[])
+
+    def test_038_batch_slicing_deduplicates_targets_in_request_order(self):
+        r=slicer.slice_many(self.graph,['demo.target','demo.caller','demo.target']);self.assertEqual(list(r),['demo.target','demo.caller'])
