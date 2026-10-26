@@ -16,3 +16,7 @@ class ContractsRound3(unittest.TestCase):
     def test_reports_reject_duplicate_or_empty_member_ids(self):
         for included in [['demo.target','demo.target'],['demo.target','']]:
             with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'included':included})
+    def test_reports_reject_roles_that_reference_omitted_members(self):
+        for name in ['callees','callers','type_refs','global_refs']:
+            with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),name:['missing']})
+        self.assertEqual(slicer.SliceResult.from_dict(self.result.to_dict()).included,self.result.included)

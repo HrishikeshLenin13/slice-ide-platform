@@ -35,6 +35,9 @@ class SliceResult:
         for name in ("unsound_reasons","unresolved"):
             values=data.get(name,{})
             if not isinstance(values,dict) or not all(isinstance(k,str) and isinstance(v,list) and all(isinstance(s,str) for s in v) for k,v in values.items()): raise ValueError(f"invalid {name}")
+        included = set(data["included"])
+        for name in ("callees","callers","type_refs","global_refs"):
+            if not set(data[name]).issubset(included): raise ValueError(f"{name} must be included")
         if data["target"] not in data["included"]: raise ValueError("target must be included")
         return cls(**copy.deepcopy(data))
 
