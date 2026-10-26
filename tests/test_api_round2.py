@@ -14,3 +14,6 @@ class ApiExtensions(unittest.TestCase):
     def test_json_report_round_trip_is_detached(self):
         data=self.result.to_dict();restored=slicer.SliceResult.from_dict(data);data['included'].clear();self.assertEqual(restored.included,self.result.included)
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict({'target':'x'})
+
+    def test_summary_counts_members_without_exposing_lists(self):
+        data=self.result.summary();self.assertEqual(data['target'],'demo.target');self.assertEqual(data['callers'],1);self.assertIsInstance(data['included'],int)

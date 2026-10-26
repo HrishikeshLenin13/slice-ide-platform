@@ -40,6 +40,11 @@ class SliceResult:
         """Return a detached, JSON-serializable report for IDE clients."""
         return asdict(self)
 
+    def summary(self) -> dict:
+        return {"target":self.target,"sound":self.sound,"included":len(self.included),
+                "callees":len(self.callees),"callers":len(self.callers),"types":len(self.type_refs),"globals":len(self.global_refs),
+                "unresolved":sum(len(values) for values in self.unresolved.values())}
+
     def symbols_in_order(self) -> List[str]:
         """Get included symbols in order."""
         return list(self.included)
