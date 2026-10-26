@@ -1,155 +1,42 @@
 # Slice IDE Platform
 
-**Complete IDE integration for minimal LLM context slicing.**
+Python backend building blocks for dependency-aware code-context slicing. This repository currently contains parser, graph, slicing, soundness, and configuration modules. It does **not** yet include a runnable HTTP API, VS Code extension, or JetBrains plugin.
 
-Slice analyzes your codebase using static analysis (not RAG/embeddings) to compute the exact minimal set of functions, classes, and variables needed to understand any target symbol. Then it integrates seamlessly into VS Code and IntelliJ/JetBrains IDEs.
+## Implemented
 
-## 🚀 Features
+- Python AST symbol parsing and dependency-graph construction.
+- Configurable callee/caller traversal depths, including zero-depth slices.
+- Type/global references, source rendering, and static soundness diagnostics.
+- `SliceResult.to_dict()` returns an independent, JSON-serializable report for future IDE clients.
+- `symbols_in_order()` returns a copy, so consumers cannot mutate report ordering.
 
-- **Dependency Graph Analysis** – Computes exact transitive closure of symbols (not guesses)
-- **Soundness Certification** – Flags when it can't be 100% sure (eval, getattr, star-imports, etc.)
-- **Multi-Language** – Python, TypeScript, Go, Java (via tree-sitter)
-- **IDE Integration** – Right-click → "Slice This" in VS Code, IntelliJ, PyCharm, GoLand, etc.
-- **Session Caching** – Multi-turn context reuse with diff-based updates (massive token savings)
-- **Copy to Claude/Cursor/Codex** – Format and send directly to your AI
-- **Type-Aware Resolution** – LSP integration for accurate method/property resolution
+## Test
 
-## 📊 Impact
+The core tests use the Python standard library:
 
-- **~70% token reduction** on average (slice vs. naive full-file baseline)
-- **Faster AI responses** (less context = quicker processing)
-- **Better edit quality** (focused context = better understanding)
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────┐
-│  VS Code Extension  │  IntelliJ Plugin  │
-│  (TypeScript)       │  (Kotlin)         │
-└──────────┬──────────┴────────┬──────────┘
-           │                   │
-           └─────────┬─────────┘
-                     │
-            ┌────────▼────────┐
-            │  Backend Service │
-            │  (FastAPI)       │
-            └────────┬────────┘
-                     │
-        ┌────────────┴────────────┐
-        │                         │
-    ┌───▼────┐          ┌────────▼───┐
-    │ Parser │          │ Graph       │
-    │ (tree- │──────────│ Builder    │
-    │ sitter)│          │            │
-    └────────┘          └────────────┘
+```sh
+python3 -m unittest discover -s tests -v
 ```
 
-## ⚡ Quick Start
+Run this command from the repository root. Optional service dependencies are listed in `backend/requirements.txt`; the core tests do not require a web server.
 
-### Backend
-```bash
-cd backend
-pip install -r requirements.txt
-python -m uvicorn app:app --reload
-# Server runs at http://localhost:8080
+## Integration example
+
+```python
+import json
+from backend.slicer import slice_for
+
+# graph is a backend.graph.RepoGraph built from parsed Python modules.
+# result = slice_for(graph, 'package.module.function', callee_depth=2)
+# print(json.dumps(result.to_dict(), indent=2))
 ```
 
-### VS Code Extension
-```bash
-cd vscode-extension
-npm install
-npm run watch
-# Open VS Code, press F5 to launch extension in debug mode
-```
+The commented lines require a populated graph and a real symbol ID; they are an integration sketch, not a server quickstart.
 
-### IntelliJ Plugin
-```bash
-cd intellij-plugin
-./gradlew runIde
-# IntelliJ opens with plugin loaded
-```
+## Limits and next steps
 
-## 📖 Documentation
+Dynamic Python behavior can defeat static analysis. Inspect `sound`, `unsound_reasons`, and `unresolved` rather than treating a small slice as proof of complete coverage. Other-language parsers, a service endpoint, IDE extensions, and session integration remain future work.
 
-- [Backend API Docs](/backend/API.md) – HTTP endpoints, request/response examples
-- [VS Code Extension Guide](/vscode-extension/README.md) – Setup, usage, troubleshooting
-- [IntelliJ Plugin Guide](/intellij-plugin/README.md) – Setup, IDE compatibility
-- [Development Guide](/DEVELOPMENT.md) – Architecture, adding languages, extending
+## License
 
-## 🔌 API Overview
-
-```bash
-# Compute a slice
-curl -X POST http://localhost:8080/api/slice \
-  -H "Content-Type: application/json" \
-  -d '{
-    "repo_path": "/path/to/repo",
-    "target": "module.ClassName.method",
-    "language": "python",
-    "callee_depth": null,
-    "caller_depth": 1,
-    "include_reasons": true
-  }'
-
-# Response includes:
-# - included symbols with source code
-# - soundness status + reasons if unsound
-# - token counts (slice vs naive)
-# - dependency chain explanations
-```
-
-## 📦 What's Inside
-
-```
-slice-ide-platform/
-├── backend/                    # FastAPI backend service
-│   ├── app.py                 # Main server
-│   ├── parser.py              # Tree-sitter parsers
-│   ├── graph.py               # Dependency graph builder
-│   ├── slicer.py              # Core slicing logic
-│   ├── soundness.py           # Dynamic construct detection
-│   ├── session.py             # Session caching
-│   ├── lsp_client.py          # LSP integration
-│   ├── requirements.txt
-│   ├── Dockerfile
-│   └── API.md
-├── vscode-extension/           # VS Code extension
-│   ├── src/
-│   │   ├── extension.ts       # Entry point
-│   │   ├── sliceClient.ts     # Backend HTTP client
-│   │   ├── commands/
-│   │   ├── ui/
-│   │   └── config/
-│   ├── package.json
-│   └── README.md
-├── intellij-plugin/            # IntelliJ/JetBrains plugin
-│   ├── src/main/kotlin/
-│   ├── resources/
-│   ├── build.gradle.kts
-│   └── README.md
-├── .github/
-│   └── workflows/              # CI/CD pipelines
-├── DEVELOPMENT.md
-└── README.md (this file)
-```
-
-## 🎯 Roadmap
-
-- [x] Backend API skeleton
-- [x] Multi-language parser support
-- [x] VS Code extension MVP
-- [x] IntelliJ plugin MVP
-- [ ] Web UI dashboard
-- [ ] Type-aware resolution (LSP)
-- [ ] SWE-bench validation
-- [ ] Team analytics dashboard
-
-## 📜 License
-
-MIT
-
----
-
-**Status:** 🚀 Under active development
-
-**Questions?** Open an issue or check [DEVELOPMENT.md](/DEVELOPMENT.md)
+MIT. See [LICENSE](LICENSE).
