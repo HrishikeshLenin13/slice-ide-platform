@@ -136,3 +136,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_036_zero_callee_depth_omits_transitive_calls(self):
         r=slicer.slice_for(self.graph,'demo.target',callee_depth=0,caller_depth=0);self.assertNotIn('demo.leaf',r.included)
+
+    def test_037_zero_caller_depth_omits_reverse_dependencies(self):
+        r=slicer.slice_for(self.graph,'demo.target',caller_depth=0);self.assertEqual(r.callers,[])
