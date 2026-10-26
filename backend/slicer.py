@@ -1,6 +1,9 @@
 """Core slicing logic: compute minimal context for a target symbol."""
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields
+import copy
+import ast
+import textwrap
 from typing import List, Dict, Set, Optional
 
 from .parser import Symbol
@@ -19,6 +22,19 @@ class SliceResult:
     sound: bool
     unsound_reasons: Dict[str, List[str]] = field(default_factory=dict)
     unresolved: Dict[str, List[str]] = field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        if not isinstance(data, dict): raise ValueError("report must be an object")
+        if set(data) - {item.name for item in fields(cls)}: raise ValueError("unknown report field")
+        if not isinstance(data.get("target"),str) or not isinstance(data.get("sound"),bool): raise ValueError("invalid report identity or soundness")
+        for name in ("included","callees","callers","type_refs","global_refs"):
+            if not isinstance(data.get(name),list) or not all(isinstance(s,str) for s in data[name]): raise ValueError(f"invalid {name}")
+        for name in ("unsound_reasons","unresolved"):
+            values=data.get(name,{})
+            if not isinstance(values,dict) or not all(isinstance(k,str) and isinstance(v,list) and all(isinstance(s,str) for s in v) for k,v in values.items()): raise ValueError(f"invalid {name}")
+        if data["target"] not in data["included"]: raise ValueError("target must be included")
+        return cls(**copy.deepcopy(data))
 
     def to_dict(self) -> dict:
         """Return a detached, JSON-serializable report for IDE clients."""
