@@ -127,3 +127,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_033_unknown_role_queries_fail_instead_of_guessing(self):
         with self.assertRaises(KeyError):slicer.symbol_roles(self.result,'missing')
+
+    def test_034_source_units_keep_selected_emission_order(self):
+        self.assertEqual([u['id'] for u in slicer.source_units(self.graph,self.result)],self.result.included)
