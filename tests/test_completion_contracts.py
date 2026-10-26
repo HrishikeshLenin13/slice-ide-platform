@@ -161,3 +161,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_044_batch_depth_validation_precedes_target_iteration(self):
         with self.assertRaises(ValueError):slicer.slice_many(self.graph,[],callee_depth=1.5)
+
+    def test_045_empty_batches_return_empty_outputs(self):
+        self.assertEqual(slicer.slice_many(self.graph,[]),{});self.assertEqual(slicer.render_many(self.graph,[]),{})
