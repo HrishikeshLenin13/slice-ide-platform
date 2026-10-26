@@ -115,3 +115,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_029_deserialized_nested_metadata_is_detached(self):
         data=self.result.to_dict();data['unresolved']={'demo.target':['name']};r=slicer.SliceResult.from_dict(data);data['unresolved']['demo.target'].clear();self.assertEqual(r.unresolved['demo.target'],['name'])
+
+    def test_030_symbol_order_accessors_return_copies(self):
+        ids=self.result.symbols_in_order();ids.clear();self.assertTrue(self.result.included)
