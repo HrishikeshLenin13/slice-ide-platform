@@ -189,3 +189,12 @@ def source_units(graph: RepoGraph, result: SliceResult) -> list[dict]:
     return [{"id":sid,"kind":graph.symbols[sid].kind,"file_path":graph.symbols[sid].file_path,
              "lineno":graph.symbols[sid].lineno,"source":graph.symbols[sid].source,
              "target":sid==result.target} for sid in result.included]
+
+def slice_many(graph: RepoGraph, targets, *, callee_depth=None, caller_depth=1) -> dict[str, SliceResult]:
+    """Reuse one parsed graph; validate all targets before computing a batch."""
+    if callee_depth is not None and callee_depth < 0: raise ValueError("callee_depth must be non-negative")
+    if caller_depth < 0: raise ValueError("caller_depth must be non-negative")
+    ids=list(dict.fromkeys(targets))
+    for sid in ids:
+        if sid not in graph.symbols: raise KeyError(f"unknown symbol: {sid!r}")
+    return {sid:slice_for(graph,sid,callee_depth=callee_depth,caller_depth=caller_depth) for sid in ids}

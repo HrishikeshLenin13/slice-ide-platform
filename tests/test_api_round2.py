@@ -23,3 +23,7 @@ class ApiExtensions(unittest.TestCase):
 
     def test_source_units_preserve_emission_order_and_detach_metadata(self):
         units=slicer.source_units(self.graph,self.result);self.assertEqual([u['id'] for u in units],self.result.included);units[0]['source']='changed';self.assertNotEqual(self.graph.symbols[self.result.target].source,'changed')
+
+    def test_batch_reuses_graph_and_deduplicates_targets(self):
+        batch=slicer.slice_many(self.graph,['demo.target','demo.target','demo.caller']);self.assertEqual(list(batch),['demo.target','demo.caller'])
+        with self.assertRaises(KeyError):slicer.slice_many(self.graph,['demo.target','missing'])
