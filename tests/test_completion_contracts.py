@@ -130,3 +130,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_034_source_units_keep_selected_emission_order(self):
         self.assertEqual([u['id'] for u in slicer.source_units(self.graph,self.result)],self.result.included)
+
+    def test_035_source_unit_role_arrays_are_detached(self):
+        units=slicer.source_units(self.graph,self.result);units[0]['roles'].clear();self.assertTrue(slicer.symbol_roles(self.result,'demo.target'))
