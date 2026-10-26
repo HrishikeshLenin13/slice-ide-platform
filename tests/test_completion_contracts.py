@@ -42,3 +42,7 @@ class CompletionContracts(unittest.TestCase):
     def test_009_reject_empty_ids_in_callees(self):
         data=self.result.to_dict();data['callees']=['']
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
+
+    def test_010_reject_nonlist_callers(self):
+        data=self.result.to_dict();data['callers']='bad'
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
