@@ -15,3 +15,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_002_report_round_trip_preserves_all_fields(self):
         data=self.result.to_dict();self.assertEqual(slicer.SliceResult.from_dict(data).to_dict(),data)
+
+    def test_003_serialized_reports_are_json_compatible(self):
+        data=self.result.to_dict();self.assertEqual(json.loads(json.dumps(data)),data)
