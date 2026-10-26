@@ -106,3 +106,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_026_metadata_lists_are_validated_for_unresolved(self):
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'unresolved':{'demo.target':'not-a-list'}})
+
+    def test_027_metadata_lists_are_validated_for_unsound_reasons(self):
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'unsound_reasons':{'demo.target':'not-a-list'}})
