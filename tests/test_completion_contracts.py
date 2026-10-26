@@ -148,3 +148,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_040_batch_render_matches_individual_context(self):
         r=slicer.render_many(self.graph,['demo.target']);self.assertEqual(r['demo.target'],slicer.render_slice(self.graph,self.result))
+
+    def test_041_rendering_does_not_mutate_parsed_source(self):
+        before=self.graph.symbols['demo.caller'].source;slicer.render_slice(self.graph,self.result);self.assertEqual(self.graph.symbols['demo.caller'].source,before)
