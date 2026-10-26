@@ -26,3 +26,7 @@ class CompletionContracts(unittest.TestCase):
     def test_005_reject_duplicate_included(self):
         data=self.result.to_dict();data['included']=['demo.target','demo.target']
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
+
+    def test_006_reject_empty_ids_in_included(self):
+        data=self.result.to_dict();data['included']=['']
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
