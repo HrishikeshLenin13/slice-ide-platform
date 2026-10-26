@@ -100,3 +100,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_024_target_must_be_in_the_included_members(self):
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'target':'missing'})
+
+    def test_025_soundness_must_be_a_real_boolean(self):
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'sound':1})
