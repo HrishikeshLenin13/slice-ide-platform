@@ -118,3 +118,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_030_symbol_order_accessors_return_copies(self):
         ids=self.result.symbols_in_order();ids.clear();self.assertTrue(self.result.included)
+
+    def test_031_summary_exposes_counts_not_internal_lists(self):
+        summary=self.result.summary();self.assertEqual(summary['included'],len(self.result.included));self.assertIsInstance(summary['callers'],int)
