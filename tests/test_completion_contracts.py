@@ -30,3 +30,7 @@ class CompletionContracts(unittest.TestCase):
     def test_006_reject_empty_ids_in_included(self):
         data=self.result.to_dict();data['included']=['']
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
+
+    def test_007_reject_nonlist_callees(self):
+        data=self.result.to_dict();data['callees']='bad'
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
