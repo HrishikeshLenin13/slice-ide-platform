@@ -40,3 +40,7 @@ Dynamic Python behavior can defeat static analysis. Inspect `sound`, `unsound_re
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Developer resources
+
+- [Feature usage and API contracts](docs/RECENT_IMPROVEMENTS.md)
