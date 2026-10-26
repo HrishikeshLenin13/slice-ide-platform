@@ -50,6 +50,12 @@ class SliceResult:
         return list(self.included)
 
 
+def _validate_depths(callee_depth, caller_depth):
+    for name, value in (("callee_depth", callee_depth), ("caller_depth", caller_depth)):
+        if name == "callee_depth" and value is None: continue
+        if type(value) is not int or value < 0: raise ValueError(f"{name} must be a non-negative integer")
+
+
 def slice_for(
     graph: RepoGraph,
     target_id: str,
@@ -58,10 +64,7 @@ def slice_for(
     caller_depth: int = 1,
 ) -> SliceResult:
     """Compute minimal slice for a target symbol."""
-    if callee_depth is not None and callee_depth < 0:
-        raise ValueError("callee_depth must be non-negative or None")
-    if caller_depth < 0:
-        raise ValueError("caller_depth must be non-negative")
+    _validate_depths(callee_depth, caller_depth)
     if target_id not in graph.symbols:
         raise KeyError(f"unknown symbol: {target_id!r}")
 
@@ -192,8 +195,7 @@ def source_units(graph: RepoGraph, result: SliceResult) -> list[dict]:
 
 def slice_many(graph: RepoGraph, targets, *, callee_depth=None, caller_depth=1) -> dict[str, SliceResult]:
     """Reuse one parsed graph; validate all targets before computing a batch."""
-    if callee_depth is not None and callee_depth < 0: raise ValueError("callee_depth must be non-negative")
-    if caller_depth < 0: raise ValueError("caller_depth must be non-negative")
+    _validate_depths(callee_depth, caller_depth)
     ids=list(dict.fromkeys(targets))
     for sid in ids:
         if sid not in graph.symbols: raise KeyError(f"unknown symbol: {sid!r}")
