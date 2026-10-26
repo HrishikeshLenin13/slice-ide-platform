@@ -121,3 +121,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_031_summary_exposes_counts_not_internal_lists(self):
         summary=self.result.summary();self.assertEqual(summary['included'],len(self.result.included));self.assertIsInstance(summary['callers'],int)
+
+    def test_032_target_role_is_exposed_to_ide_clients(self):
+        self.assertIn('target',slicer.symbol_roles(self.result,'demo.target'))
