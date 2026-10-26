@@ -112,3 +112,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_028_serialized_member_lists_are_detached(self):
         data=self.result.to_dict();data['included'].clear();self.assertTrue(self.result.included)
+
+    def test_029_deserialized_nested_metadata_is_detached(self):
+        data=self.result.to_dict();data['unresolved']={'demo.target':['name']};r=slicer.SliceResult.from_dict(data);data['unresolved']['demo.target'].clear();self.assertEqual(r.unresolved['demo.target'],['name'])
