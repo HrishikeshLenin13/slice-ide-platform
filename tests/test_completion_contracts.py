@@ -151,3 +151,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_041_rendering_does_not_mutate_parsed_source(self):
         before=self.graph.symbols['demo.caller'].source;slicer.render_slice(self.graph,self.result);self.assertEqual(self.graph.symbols['demo.caller'].source,before)
+
+    def test_042_caller_text_omits_body_but_keeps_signature(self):
+        text=slicer.render_slice(self.graph,self.result);self.assertIn('def caller',text);self.assertIn('caller body omitted',text)
