@@ -29,7 +29,9 @@ class SliceResult:
         if set(data) - {item.name for item in fields(cls)}: raise ValueError("unknown report field")
         if not isinstance(data.get("target"),str) or not isinstance(data.get("sound"),bool): raise ValueError("invalid report identity or soundness")
         for name in ("included","callees","callers","type_refs","global_refs"):
-            if not isinstance(data.get(name),list) or not all(isinstance(s,str) for s in data[name]): raise ValueError(f"invalid {name}")
+            if not isinstance(data.get(name),list) or not all(isinstance(s,str) and s for s in data[name]): raise ValueError(f"invalid {name}")
+        for name in ("included","callees","callers","type_refs","global_refs"):
+            if len(set(data[name])) != len(data[name]): raise ValueError(f"duplicate {name}")
         for name in ("unsound_reasons","unresolved"):
             values=data.get(name,{})
             if not isinstance(values,dict) or not all(isinstance(k,str) and isinstance(v,list) and all(isinstance(s,str) for s in v) for k,v in values.items()): raise ValueError(f"invalid {name}")

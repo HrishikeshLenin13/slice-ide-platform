@@ -13,3 +13,6 @@ class ContractsRound3(unittest.TestCase):
         for value in [True,1.5,'1',-1]:
             with self.assertRaises(ValueError):slicer.slice_for(self.graph,'demo.target',caller_depth=value)
             with self.assertRaises(ValueError):slicer.slice_many(self.graph,['demo.target'],callee_depth=value)
+    def test_reports_reject_duplicate_or_empty_member_ids(self):
+        for included in [['demo.target','demo.target'],['demo.target','']]:
+            with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'included':included})
