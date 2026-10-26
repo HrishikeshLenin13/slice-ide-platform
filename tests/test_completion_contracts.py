@@ -103,3 +103,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_025_soundness_must_be_a_real_boolean(self):
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'sound':1})
+
+    def test_026_metadata_lists_are_validated_for_unresolved(self):
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'unresolved':{'demo.target':'not-a-list'}})
