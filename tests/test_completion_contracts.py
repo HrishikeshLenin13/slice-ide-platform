@@ -133,3 +133,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_035_source_unit_role_arrays_are_detached(self):
         units=slicer.source_units(self.graph,self.result);units[0]['roles'].clear();self.assertTrue(slicer.symbol_roles(self.result,'demo.target'))
+
+    def test_036_zero_callee_depth_omits_transitive_calls(self):
+        r=slicer.slice_for(self.graph,'demo.target',callee_depth=0,caller_depth=0);self.assertNotIn('demo.leaf',r.included)
