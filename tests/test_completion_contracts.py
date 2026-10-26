@@ -12,3 +12,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_001_single_slice_always_keeps_the_target_first(self):
         self.assertEqual(self.result.included[0],'demo.target');self.assertIn('demo.leaf',self.result.included)
+
+    def test_002_report_round_trip_preserves_all_fields(self):
+        data=self.result.to_dict();self.assertEqual(slicer.SliceResult.from_dict(data).to_dict(),data)
