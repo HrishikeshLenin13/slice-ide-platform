@@ -142,3 +142,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_038_batch_slicing_deduplicates_targets_in_request_order(self):
         r=slicer.slice_many(self.graph,['demo.target','demo.caller','demo.target']);self.assertEqual(list(r),['demo.target','demo.caller'])
+
+    def test_039_batch_slicing_rejects_missing_targets(self):
+        with self.assertRaises(KeyError):slicer.slice_many(self.graph,['demo.target','missing'])
