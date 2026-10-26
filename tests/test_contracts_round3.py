@@ -20,3 +20,8 @@ class ContractsRound3(unittest.TestCase):
         for name in ['callees','callers','type_refs','global_refs']:
             with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),name:['missing']})
         self.assertEqual(slicer.SliceResult.from_dict(self.result.to_dict()).included,self.result.included)
+    def test_source_units_expose_detached_multi_role_labels(self):
+        self.assertEqual(slicer.symbol_roles(self.result,'demo.target'),['target'])
+        units=slicer.source_units(self.graph,self.result);self.assertIn('roles',units[0]);units[0]['roles'].clear()
+        self.assertEqual(slicer.symbol_roles(self.result,'demo.target'),['target'])
+        with self.assertRaises(KeyError):slicer.symbol_roles(self.result,'missing')

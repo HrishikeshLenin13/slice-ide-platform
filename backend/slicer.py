@@ -192,11 +192,19 @@ def render_slice(graph: RepoGraph, result: SliceResult, *, caller_signature_only
             parts.append(f"\n# [{tag}] {sym.id}\n{src}")
     return "\n".join(parts)
 
+def symbol_roles(result: SliceResult, symbol_id: str) -> list[str]:
+    """A symbol may have several graph roles; preserve stable display order."""
+    if symbol_id not in result.included: raise KeyError(symbol_id)
+    return [role for role, matches in (("target", symbol_id == result.target),
+            ("callee", symbol_id in result.callees), ("caller", symbol_id in result.callers),
+            ("type", symbol_id in result.type_refs), ("global", symbol_id in result.global_refs)) if matches]
+
+
 def source_units(graph: RepoGraph, result: SliceResult) -> list[dict]:
     """Full-source units for IDE clients; caller bodies are intentionally retained."""
     return [{"id":sid,"kind":graph.symbols[sid].kind,"file_path":graph.symbols[sid].file_path,
              "lineno":graph.symbols[sid].lineno,"source":graph.symbols[sid].source,
-             "target":sid==result.target} for sid in result.included]
+             "target":sid==result.target,"roles":symbol_roles(result,sid)} for sid in result.included]
 
 def slice_many(graph: RepoGraph, targets, *, callee_depth=None, caller_depth=1) -> dict[str, SliceResult]:
     """Reuse one parsed graph; validate all targets before computing a batch."""
