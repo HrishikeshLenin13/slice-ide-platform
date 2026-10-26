@@ -58,3 +58,7 @@ class CompletionContracts(unittest.TestCase):
     def test_013_reject_nonlist_type_refs(self):
         data=self.result.to_dict();data['type_refs']='bad'
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
+
+    def test_014_reject_duplicate_type_refs(self):
+        data=self.result.to_dict();data['type_refs']=['demo.target','demo.target']
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict(data)
