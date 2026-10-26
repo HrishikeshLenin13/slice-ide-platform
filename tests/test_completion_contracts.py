@@ -109,3 +109,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_027_metadata_lists_are_validated_for_unsound_reasons(self):
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'unsound_reasons':{'demo.target':'not-a-list'}})
+
+    def test_028_serialized_member_lists_are_detached(self):
+        data=self.result.to_dict();data['included'].clear();self.assertTrue(self.result.included)
