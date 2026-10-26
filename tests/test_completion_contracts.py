@@ -97,3 +97,6 @@ class CompletionContracts(unittest.TestCase):
 
     def test_023_unknown_report_fields_fail_explicitly(self):
         with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'secret':1})
+
+    def test_024_target_must_be_in_the_included_members(self):
+        with self.assertRaises(ValueError):slicer.SliceResult.from_dict({**self.result.to_dict(),'target':'missing'})
