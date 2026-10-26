@@ -158,3 +158,6 @@ class CompletionContracts(unittest.TestCase):
     def test_043_depth_validation_rejects_booleans_and_floats(self):
         for value in [True,1.5,'1',-1]:
             with self.assertRaises(ValueError):slicer.slice_for(self.graph,'demo.target',caller_depth=value)
+
+    def test_044_batch_depth_validation_precedes_target_iteration(self):
+        with self.assertRaises(ValueError):slicer.slice_many(self.graph,[],callee_depth=1.5)
