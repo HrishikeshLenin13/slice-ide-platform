@@ -474,3 +474,10 @@ class QualityContracts(unittest.TestCase):
         modules,symbols=self.parse('def target():return 1\n')
         self.assertEqual(set(modules),{'demo'})
         self.assertEqual(set(symbols),{'demo.target'})
+
+    def test_061_syntax_failure_1(self):
+        modules,symbols=self.parse('def : pass')
+        self.assertNotIn('demo',modules)
+        self.assertEqual(symbols,{})
+        modules,symbols=self.parse('def recovered(): return 1\n')
+        self.assertEqual(set(symbols),{'demo.recovered'})
