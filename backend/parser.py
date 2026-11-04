@@ -40,6 +40,17 @@ class ModuleInfo:
     star_imports: List[str] = field(default_factory=list)
 
 
+def assignment_names(target):
+    """Extract only bound names, not attributes/subscripts, from unpacking targets."""
+    if isinstance(target, ast.Name):
+        yield target.id
+    elif isinstance(target, ast.Starred):
+        yield from assignment_names(target.value)
+    elif isinstance(target, (ast.Tuple, ast.List)):
+        for item in target.elts:
+            yield from assignment_names(item)
+
+
 class PythonParser:
     """Parser for Python code using AST."""
 
@@ -140,11 +151,11 @@ class PythonParser:
             elif isinstance(node, (ast.Assign, ast.AnnAssign)):
                 targets = node.targets if isinstance(node, ast.Assign) else [node.target]
                 for t in targets:
-                    if isinstance(t, ast.Name):
-                        sid = f"{module}.{t.id}"
+                    for binding_name in assignment_names(t):
+                        sid = f"{module}.{binding_name}"
                         symbols[sid] = Symbol(
                             id=sid, kind="global", module=module, file_path=file_path,
-                            qualname=t.id, lineno=node.lineno, end_lineno=node.end_lineno or node.lineno,
+                            qualname=binding_name, lineno=node.lineno, end_lineno=node.end_lineno or node.lineno,
                             source=PythonParser._get_source_segment(lines, node), node=node,
                         )
 
