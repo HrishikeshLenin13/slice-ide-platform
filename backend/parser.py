@@ -173,7 +173,7 @@ class PythonParser:
         return mod_info, symbols
 
     @staticmethod
-    def parse_repo(repo_root: str) -> Tuple[Dict[str, ModuleInfo], Dict[str, Symbol]]:
+    def parse_repo(repo_root: str, diagnostics: Optional[List[dict]] = None) -> Tuple[Dict[str, ModuleInfo], Dict[str, Symbol]]:
         """Parse entire repository."""
         modules: Dict[str, ModuleInfo] = {}
         all_symbols: Dict[str, Symbol] = {}
@@ -184,7 +184,10 @@ class PythonParser:
                 modules[mod_info.module] = mod_info
                 all_symbols.update(symbols)
             except Exception as e:
-                print(f"Warning: failed to parse {fp}: {e}")
+                if diagnostics is not None:
+                    diagnostics.append({"file":fp,"kind":type(e).__name__,"message":str(e)})
+                else:
+                    print(f"Warning: failed to parse {fp}: {e}")
         
         return modules, all_symbols
 
@@ -208,6 +211,6 @@ class UniversalParser:
         return mapping.get(ext, "python")
 
     @staticmethod
-    def parse_repo(repo_root: str) -> Tuple[Dict[str, ModuleInfo], Dict[str, Symbol]]:
+    def parse_repo(repo_root: str, diagnostics: Optional[List[dict]] = None) -> Tuple[Dict[str, ModuleInfo], Dict[str, Symbol]]:
         """Parse repository with auto language detection."""
-        return PythonParser.parse_repo(repo_root)
+        return PythonParser.parse_repo(repo_root, diagnostics=diagnostics)
